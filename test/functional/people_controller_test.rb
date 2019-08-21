@@ -349,7 +349,7 @@ class PeopleControllerTest < ActionController::TestCase
     permissions_on_person = Permission.where(contributor_type: 'Person', contributor_id: person.try(:id))
     assert_equal 0, permissions_on_person.count
 
-    permissions = data_file.policy.permissions
+    permissions = data_file.reload.policy.permissions
 
     assert_equal 1, permissions.count
     assert_equal pi.id, permissions.first.contributor_id
@@ -381,7 +381,7 @@ class PeopleControllerTest < ActionController::TestCase
     permissions_on_person = Permission.where(contributor_type: 'Person', contributor_id: person.try(:id))
     assert_equal 0, permissions_on_person.count
 
-    permissions = data_file.policy.permissions
+    permissions = data_file.reload.policy.permissions
 
     assert_equal 1, permissions.count
     assert_equal pal.id, permissions.first.contributor_id
