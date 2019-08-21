@@ -58,7 +58,7 @@ class PolicyBasedAuthTest < ActiveSupport::TestCase
   end
 
   test 'authorization_permissions' do
-    with_config_value :auth_lookup_enabled, true do
+    with_config_value :async_auth_refresh, true do
       Sop.delete_all
       user = Factory(:person).user
       other_user = Factory :user
@@ -85,7 +85,7 @@ class PolicyBasedAuthTest < ActiveSupport::TestCase
   end
 
   test 'update lookup table' do
-    with_config_value :auth_lookup_enabled, true do
+    with_config_value :async_auth_refresh, true do
       user = Factory :user
       other_user = Factory :user
       sop = Factory :sop, contributor: user.person, policy: Factory(:editing_public_policy)
@@ -121,7 +121,7 @@ class PolicyBasedAuthTest < ActiveSupport::TestCase
   end
 
   test 'lookup table counts' do
-    with_config_value :auth_lookup_enabled, true do
+    with_config_value :async_auth_refresh, true do
       User.current_user = nil
       user = Factory :user
       disable_authorization_checks do
@@ -138,7 +138,7 @@ class PolicyBasedAuthTest < ActiveSupport::TestCase
   end
 
   test 'remove_invalid_auth_lookup_entries' do
-    with_config_value :auth_lookup_enabled, true do
+    with_config_value :async_auth_refresh, true do
       User.current_user = nil
       user = Factory :user
       disable_authorization_checks do

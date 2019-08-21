@@ -53,18 +53,18 @@ Kernel.class_eval do
     Seek::Config.is_virtualliver = vl
   end
 
-  def with_auth_lookup_enabled
-    val = Seek::Config.auth_lookup_enabled
-    Seek::Config.auth_lookup_enabled = true
+  def with_async_auth_refresh_enabled
+    val = Seek::Config.async_auth_refresh
+    Seek::Config.async_auth_refresh = true
     yield
-    Seek::Config.auth_lookup_enabled = val
+    Seek::Config.async_auth_refresh = val
   end
 
-  def with_auth_lookup_disabled
-    val = Seek::Config.auth_lookup_enabled
-    Seek::Config.auth_lookup_enabled = false
+  def with_async_auth_refresh_disabled
+    val = Seek::Config.async_auth_refresh
+    Seek::Config.async_auth_refresh = false
     yield
-    Seek::Config.auth_lookup_enabled = val
+    Seek::Config.async_auth_refresh = val
   end
 
   def with_alternative_rendering(key, value)

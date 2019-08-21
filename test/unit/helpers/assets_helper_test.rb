@@ -45,7 +45,7 @@ class AssetsHelperTest < ActionView::TestCase
 
   test 'authorised assets with lookup' do
     @assets = create_a_bunch_of_assets
-    with_auth_lookup_enabled do
+    with_async_auth_refresh_enabled do
       assert_not_equal Sop.count, Sop.lookup_count_for_user(@user)
       assert !Sop.lookup_table_consistent?(@user.id)
 

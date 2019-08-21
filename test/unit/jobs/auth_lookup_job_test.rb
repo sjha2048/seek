@@ -2,14 +2,14 @@ require 'test_helper'
 
 class AuthLookupJobTest < ActiveSupport::TestCase
   def setup
-    @val = Seek::Config.auth_lookup_enabled
-    Seek::Config.auth_lookup_enabled = true
+    @val = Seek::Config.async_auth_refresh
+    Seek::Config.async_auth_refresh = true
     AuthLookupUpdateQueue.destroy_all
     Delayed::Job.destroy_all
   end
 
   def teardown
-    Seek::Config.auth_lookup_enabled = @val
+    Seek::Config.async_auth_refresh = @val
   end
 
   test 'exists' do

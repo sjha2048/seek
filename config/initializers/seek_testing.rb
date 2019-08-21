@@ -22,7 +22,7 @@ SEEK::Application.configure do
       Settings.defaults[:solr_enabled] = false
 
       Settings.defaults[:publish_button_enabled] = true
-      Settings.defaults[:auth_lookup_enabled] = false
+      Settings.defaults[:async_auth_refresh] = false
       Settings.defaults[:project_browser_enabled] = true
       Settings.defaults[:experimental_features_enabled] = true
       Settings.defaults[:filestore_path] = "tmp/testing-filestore"

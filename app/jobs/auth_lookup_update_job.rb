@@ -1,16 +1,13 @@
 class AuthLookupUpdateJob < SeekJob
   def add_items_to_queue(items, time = default_delay.from_now, priority = 0, queuepriority = default_priority)
-    if Seek::Config.auth_lookup_enabled
+    #needs to retain any nil items, which Array(items) would remove
+    items = [items].flatten
 
-      #needs to retain any nil items, which Array(items) would remove
-      items = [items].flatten
-
-      disable_authorization_checks do
-        items.uniq.each do |item|
-          add_item_to_queue(item, queuepriority)
-        end
-        queue_job(priority, time)
+    disable_authorization_checks do
+      items.uniq.each do |item|
+        add_item_to_queue(item, queuepriority)
       end
+      queue_job(priority, time)
     end
   end
 

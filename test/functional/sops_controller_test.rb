@@ -1232,7 +1232,7 @@ class SopsControllerTest < ActionController::TestCase
 
     AuthLookupUpdateQueue.destroy_all
 
-    with_config_value(:auth_lookup_enabled, true) do
+    with_config_value(:async_auth_refresh, true) do
       assert_difference('AuthLookupUpdateQueue.count', 1) do
         put :update, params: {id: sop.id, sop: {title: 'fish', creator_ids: [creator.id.to_s]}}
         assert_redirected_to sop

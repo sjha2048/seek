@@ -32,26 +32,20 @@ module Seek
       #
       # by default state_allows_#{action} always returns true, but can be overridden in the particular model type to tune its behaviour
       Seek::Permissions::ActsAsAuthorized::AUTHORIZATION_ACTIONS.each do |action|
-        eval <<-END_EVAL
-            def can_#{action}? user = User.current_user
-              authorized_for_#{action}?(user) && state_allows_#{action}?(user)
-            end
+        define_method("can_#{action}?") do |user = User.current_user|
+          send("authorized_for_#{action}?", user) && send("state_allows_#{action}?", user)
+        end
 
-            def authorized_for_#{action}? user = User.current_user
-                return true if new_record?
-                user_id = user.nil? ? 0 : user.id
-                if Seek::Config.auth_lookup_enabled
-                  lookup = self.class.lookup_for_asset("#{action}", user_id,self.id)
-                else
-                  lookup=nil
-                end
-                if lookup.nil?
-                  authorized_for_action(user,"#{action}")
-                else
-                  lookup
-                end
-            end
-        END_EVAL
+        define_method("authorized_for_#{action}?") do |user = User.current_user|
+          return true if new_record?
+          user_id = user.nil? ? 0 : user.id
+          lookup = self.class.lookup_for_asset("#{action}", user_id,self.id)
+          if lookup.nil?
+            authorized_for_action(user,"#{action}")
+          else
+            lookup
+          end
+        end
       end
 
       module AuthLookupClassMethods
@@ -61,20 +55,10 @@ module Seek
         def all_authorized_for(action, user = User.current_user, projects = nil, filter_by_permissions = true)
           projects = Array(projects) unless projects.nil?
           user_id = user.nil? ? 0 : user.id
-          assets = []
-          programatic_project_filter = !projects.nil? && (!Seek::Config.auth_lookup_enabled || (self == Assay || self == Study))
-          if Seek::Config.auth_lookup_enabled
-            if lookup_table_consistent?(user_id)
-              Rails.logger.info("Lookup table #{lookup_table_name} is complete for user_id = #{user_id}")
-              assets = lookup_for_action_and_user action, user_id, projects
-            else
-              Rails.logger.info("Lookup table #{lookup_table_name} is incomplete for user_id = #{user_id} - doing things the slow way")
-              assets = default_order.select { |df| df.send("authorized_for_#{action}?", user) }
-              programatic_project_filter = !projects.nil?
-            end
-          else
-            assets = default_order.select { |df| df.send("authorized_for_#{action}?", user) }
-          end
+          programatic_project_filter = !projects.nil? && (self == Assay || self == Study)
+
+          ensure_lookup_consistency(user_id)
+          assets = lookup_for_action_and_user(action, user_id, projects)
 
           if filter_by_permissions
             assets = assets.select { |a| a.send("state_allows_#{action}?", user) }
@@ -93,18 +77,14 @@ module Seek
         def authorize_asset_collection(assets, action, user = User.current_user, filter_by_permissions = true)
           return assets if assets.empty?
           user_id = user.nil? ? 0 : user.id
-          if Seek::Config.auth_lookup_enabled && lookup_table_consistent?(user_id)
-            ids = assets.collect(&:id)
-            clause = "asset_id IN (#{ids.join(',')})"
-            sql =  "SELECT asset_id from #{lookup_table_name} WHERE user_id = #{user_id} AND (#{clause}) AND can_#{action}=#{ActiveRecord::Base.connection.quoted_true}"
-            ids = ActiveRecord::Base.connection.select_all(sql).collect { |k| k['asset_id'].to_s }
-            assets = assets.select { |asset| ids.include?(asset.id.to_s) }
-          else
-            assets = assets.select { |a| a.send("authorized_for_#{action}?", user) }
-          end
+
+          ensure_lookup_consistency(user_id)
+          assets = lookup_for_action_and_user(action, user_id, nil).where(id: assets.collect(&:id))
+
           if filter_by_permissions
             assets = assets.select { |a| a.send("state_allows_#{action}?", user) }
           end
+
           assets
         end
 
@@ -117,7 +97,7 @@ module Seek
 
         # determines whether the lookup table records are consistent with the number of asset items in the database and the last id of the item added
         #  if it isn't consistent it will automatically remove entries that do no match the id of an existing asset of the type (calling #remove_invalid_auth_lookup_entries)
-        def lookup_table_consistent?(user_id)
+        def lookup_table_consistent?(user_id, queue_job = true)
           user_id = user_id.nil? ? 0 : user_id.id unless user_id.is_a?(Numeric)
           # cannot rely purely on the count, since an item could have been deleted and a new one added
           c = lookup_count_for_user user_id
@@ -125,11 +105,18 @@ module Seek
           last_asset_id = unscoped.order(:id).last.try(:id)
 
           # trigger off a full update for that user if the count is zero and items should exist for that type
-          if c == 0 && !last_asset_id.nil?
+          if c == 0 && !last_asset_id.nil? && queue_job
             AuthLookupUpdateJob.new.add_items_to_queue User.find_by_id(user_id)
           end
           
           (c == count && (count == 0 || (last_stored_asset_id == last_asset_id)))
+        end
+
+        def ensure_lookup_consistency(user_id)
+          unless lookup_table_consistent?(user_id)
+            Rails.logger.info("Lookup table #{lookup_table_name} is incomplete for user_id = #{user_id} - refreshing the table")
+            find_each(&:update_lookup_table_for_all_users)
+          end
         end
 
         # the name of the lookup table, holding authorisation lookup information, for this given authorised type
@@ -149,7 +136,7 @@ module Seek
           ActiveRecord::Base.connection.select_one(sql).values[0].to_i
         end
 
-        def lookup_for_action_and_user(action, user_id, projects)
+        def lookup_for_action_and_user(action, user_id, projects = nil)
           query = lookup_join(action, user_id)
 
           # Study's and Assays have to be treated differently, as they are linked to a project through the investigation'
@@ -198,32 +185,29 @@ module Seek
       def authorization_permissions(user = User.current_user)
         permissions = AuthPermissions.new
         user_id = user.nil? ? 0 : user.id
-        if Seek::Config.auth_lookup_enabled && self.class.lookup_table_consistent?(user_id)
-          sql = "SELECT can_view,can_edit,can_download,can_manage,can_delete FROM #{self.class.lookup_table_name} WHERE user_id=#{user_id} AND asset_id=#{id}"
-          res = ActiveRecord::Base.connection.select_one(sql)
-          if res.nil?
-            raise 'Expected to find record in auth lookup table'
-          else
-            permissions.can_view = ActiveRecord::Type::Boolean.new.cast(res['can_view']) && state_allows_manage?(user)
-            permissions.can_download = ActiveRecord::Type::Boolean.new.cast(res['can_download']) && state_allows_manage?(user)
-            permissions.can_edit = ActiveRecord::Type::Boolean.new.cast(res['can_edit']) && state_allows_manage?(user)
-            permissions.can_manage = ActiveRecord::Type::Boolean.new.cast(res['can_manage']) && state_allows_manage?(user)
-            permissions.can_delete = ActiveRecord::Type::Boolean.new.cast(res['can_delete']) && state_allows_manage?(user)
-          end
+        self.class.ensure_lookup_consistency(user_id)
+        sql = "SELECT can_view,can_edit,can_download,can_manage,can_delete FROM #{self.class.lookup_table_name} WHERE user_id=#{user_id} AND asset_id=#{id}"
+        res = ActiveRecord::Base.connection.select_one(sql)
+        if res.nil?
+          raise 'Expected to find record in auth lookup table'
         else
-          permissions.can_view = can_view?
-          permissions.can_download = can_download?
-          permissions.can_edit = can_edit?
-          permissions.can_manage = can_manage?
-          permissions.can_delete = can_delete?
-      end
+          permissions.can_view = ActiveRecord::Type::Boolean.new.cast(res['can_view']) && state_allows_manage?(user)
+          permissions.can_download = ActiveRecord::Type::Boolean.new.cast(res['can_download']) && state_allows_manage?(user)
+          permissions.can_edit = ActiveRecord::Type::Boolean.new.cast(res['can_edit']) && state_allows_manage?(user)
+          permissions.can_manage = ActiveRecord::Type::Boolean.new.cast(res['can_manage']) && state_allows_manage?(user)
+          permissions.can_delete = ActiveRecord::Type::Boolean.new.cast(res['can_delete']) && state_allows_manage?(user)
+        end
         permissions
       end
 
       # triggers a background task to update or create the authorization lookup table records for this item
       def check_to_queue_update_auth_table
         if try(:creators_changed?) || (previous_changes.keys & %w[contributor_id owner_id]).any?
-          AuthLookupUpdateJob.new.add_items_to_queue self
+          if Seek::Config.async_auth_refresh
+            AuthLookupUpdateJob.new.add_items_to_queue(self)
+          else
+            update_lookup_table_for_all_users
+          end
         end
       end
 

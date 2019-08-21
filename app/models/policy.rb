@@ -31,7 +31,11 @@ class Policy < ApplicationRecord
 
   def queue_update_auth_table
     unless (saved_changes.keys - ['updated_at']).empty? || assets.empty?
-      AuthLookupUpdateJob.new.add_items_to_queue(assets)
+      if Seek::Config.async_auth_refresh
+        AuthLookupUpdateJob.new.add_items_to_queue(assets)
+      else
+        assets.each(&:update_lookup_table_for_all_users)
+      end
     end
   end
 
