@@ -83,4 +83,14 @@ class Permission < ApplicationRecord
       []
     end
   end
+
+  def affected_users
+    if contributor_type == 'Person'
+      [contributor.user]
+    elsif contributor.respond_to?(:users)
+      contributor.users
+    else
+      []
+    end
+  end
 end

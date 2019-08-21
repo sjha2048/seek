@@ -22,4 +22,7 @@ class FavouriteGroupMembership < ApplicationRecord
     [person]
   end
 
+  def affected_users
+    [person.user]
+  end
 end
