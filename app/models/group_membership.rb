@@ -50,19 +50,21 @@ class GroupMembership < ApplicationRecord
   private
 
   def remove_admin_defined_role_projects
-    project = Project.find_by_id(WorkGroup.find(work_group_id).project_id)
+    work_group = WorkGroup.find_by_id(work_group_id)
+    return unless work_group
+    project = Project.find_by_id(work_group.project_id)
     person = Person.find_by_id(person_id)
-    if project && person
-      Seek::Roles::ProjectRelatedRoles.role_names.each do |role_name|
-        person.send("is_#{role_name}=", [false, project])
-      end
-      disable_authorization_checks { person.save }
+    return unless project && person
+
+    Seek::Roles::ProjectRelatedRoles.role_names.each do |role_name|
+      person.send("is_#{role_name}=", [false, project])
     end
+    disable_authorization_checks { person.save! }
   end
 
   def destroy_empty_work_group
     wg = WorkGroup.find_by_id(work_group_id)
 
-    wg.destroy if wg && wg.people.empty?
+    wg.destroy! if wg && wg.people.none?
   end
 end
