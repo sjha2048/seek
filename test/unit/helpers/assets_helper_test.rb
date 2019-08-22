@@ -11,7 +11,7 @@ class AssetsHelperTest < ActionView::TestCase
 
   test 'authorised assets' do
     @assets = create_a_bunch_of_assets
-    with_auth_lookup_disabled do
+    with_async_auth_refresh_disabled do
       check_expected_authorised
     end
   end
@@ -46,10 +46,7 @@ class AssetsHelperTest < ActionView::TestCase
   test 'authorised assets with lookup' do
     @assets = create_a_bunch_of_assets
     with_async_auth_refresh_enabled do
-      assert_not_equal Sop.count, Sop.lookup_count_for_user(@user)
-      assert !Sop.lookup_table_consistent?(@user.id)
-
-      update_lookup_tables
+      assert Sop.lookup_table_consistent?(@user.id)
 
       assert_equal DataFile.count, DataFile.lookup_count_for_user(@user.id)
       assert_equal Sop.count, Sop.lookup_count_for_user(@user.id)
