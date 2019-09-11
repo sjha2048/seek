@@ -18,7 +18,6 @@ module Seek
           belongs_to :policy, autosave: true
           enforce_required_access_for_owner :policy, :manage
 
-          after_create :add_initial_auth_lookup
           after_commit :check_to_queue_update_auth_table
           after_destroy { |record| record.policy.try(:destroy_if_redundant) }
 
@@ -166,9 +165,12 @@ module Seek
       def check_to_queue_update_auth_table
         return if destroyed?
         if try(:creators_changed?) || (previous_changes.keys & %w[contributor_id owner_id policy_id]).any?
-          AuthLookupUpdateJob.new.add_items_to_queue(self)
-        else
-          update_lookup_table_for_all_users
+          if Seek::Config.async_auth_refresh
+            add_initial_auth_lookup
+            AuthLookupUpdateJob.new.add_items_to_queue(self)
+          else
+            update_lookup_table_for_all_users
+          end
         end
       end
 

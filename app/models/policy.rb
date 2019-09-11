@@ -47,9 +47,9 @@ class Policy < ApplicationRecord
   end
 
   def assets
-    Seek::Util.authorized_types.collect do |type|
-      type.where(policy_id: id)
-    end.flatten.uniq
+    Seek::Util.authorized_types.flat_map do |type|
+      type.where(policy_id: id).distinct.to_a
+    end
   end
 
   # *****************************************************************************
