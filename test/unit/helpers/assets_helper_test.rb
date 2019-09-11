@@ -10,8 +10,8 @@ class AssetsHelperTest < ActionView::TestCase
   end
 
   test 'authorised assets' do
-    @assets = create_a_bunch_of_assets
     with_async_auth_refresh_disabled do
+      @assets = create_a_bunch_of_assets
       check_expected_authorised
     end
   end
@@ -76,17 +76,15 @@ class AssetsHelperTest < ActionView::TestCase
 
   test 'authorised assets with lookup' do
     @assets = create_a_bunch_of_assets
-    with_async_auth_refresh_enabled do
-      assert Sop.lookup_table_consistent?(@user.id)
+    assert Sop.lookup_table_consistent?(@user.id)
 
-      assert_equal DataFile.count, DataFile.lookup_count_for_user(@user.id)
-      assert_equal Sop.count, Sop.lookup_count_for_user(@user.id)
-      assert_equal Sop.count, Sop.lookup_count_for_user(@user)
-      assert Sop.lookup_table_consistent?(@user.id)
-      assert Sop.lookup_table_consistent?(nil)
+    assert_equal DataFile.count, DataFile.lookup_count_for_user(@user.id)
+    assert_equal Sop.count, Sop.lookup_count_for_user(@user.id)
+    assert_equal Sop.count, Sop.lookup_count_for_user(@user)
+    assert Sop.lookup_table_consistent?(@user.id)
+    assert Sop.lookup_table_consistent?(nil)
 
-      check_expected_authorised
-    end
+    check_expected_authorised
   end
 
   def check_expected_authorised
