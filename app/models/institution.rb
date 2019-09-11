@@ -12,7 +12,6 @@ class Institution < ApplicationRecord
   has_many :programmes, -> { distinct }, through: :projects, inverse_of: :institutions
   has_many :group_memberships, through: :work_groups, inverse_of: :institutions
   has_many :people, -> { order('last_name ASC').distinct }, through: :group_memberships, inverse_of: :institutions
-  has_many :users, through: :people
   has_many :dependent_permissions, class_name: 'Permission', as: :contributor, dependent: :destroy
 
   searchable(auto_index: false) do

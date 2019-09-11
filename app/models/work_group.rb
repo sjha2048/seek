@@ -3,7 +3,6 @@ class WorkGroup < ApplicationRecord
   belongs_to :project, inverse_of: :work_groups
   has_many :group_memberships, dependent: :destroy, inverse_of: :work_group
   has_many :people, through: :group_memberships, inverse_of: :work_groups
-  has_many :users, through: :people
   has_many :dependent_permissions, class_name: 'Permission', as: :contributor, dependent: :destroy
 
   validates :project,:presence => {:message=>"A project is required"}

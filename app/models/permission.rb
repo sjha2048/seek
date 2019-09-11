@@ -85,12 +85,8 @@ class Permission < ApplicationRecord
   end
 
   def affected_users
-    if contributor_type == 'Person'
-      [contributor.user]
-    elsif contributor.respond_to?(:users)
-      contributor.users
-    else
-      []
-    end
+    people = affected_people
+    people = people.includes(:user) if people.is_a?(ActiveRecord::Relation) # Prevent N+1
+    people.map(&:user)
   end
 end

@@ -35,8 +35,6 @@ class Project < ApplicationRecord
            through: :work_groups, source: :group_memberships
   has_many :current_people, through: :current_group_memberships, source: :person
 
-  has_many :users, through: :current_people
-
   has_many :admin_defined_role_projects
 
   has_many :openbis_endpoints
