@@ -45,7 +45,7 @@ module Seek
         define_method("authorized_for_#{action}?") do |user = User.current_user|
           return true if new_record?
           user_id = user.nil? ? 0 : user.id
-          lookup = self.class.lookup_for_asset("#{action}", user_id,self.id)
+          lookup = lookup_for("#{action}", user_id)
           if lookup.nil?
             authorized_for_action(user,"#{action}")
           else
@@ -66,7 +66,7 @@ module Seek
         # anonymous user are returned.
         def authorized_for(action, user = User.current_user)
           user_id = user&.id || 0
-          if Seek::Config.auth_lookup_enabled && lookup_table_consistent?(user_id)
+          if lookup_table_consistent?(user_id)
             assets = lookup_join(action, user_id)
             assets = assets.select { |a| a.send("state_allows_#{action}?", user) } if should_check_state?(action)
             assets
@@ -136,7 +136,7 @@ module Seek
       def authorization_permissions(user = User.current_user)
         user_id = user&.id || 0
         permissions = nil
-        if Seek::Config.auth_lookup_enabled && self.class.lookup_table_consistent?(user_id)
+        if self.class.lookup_table_consistent?(user_id)
           entry = auth_lookup.where(user_id: user_id).first
           if entry
             permissions = AuthPermissions.new
@@ -165,8 +165,10 @@ module Seek
       # triggers a background task to update or create the authorization lookup table records for this item
       def check_to_queue_update_auth_table
         return if destroyed?
-        if try(:creators_changed?) || (previous_changes.keys & %w[contributor_id owner_id]).any?
-          AuthLookupUpdateJob.new.add_items_to_queue self
+        if try(:creators_changed?) || (previous_changes.keys & %w[contributor_id owner_id policy_id]).any?
+          AuthLookupUpdateJob.new.add_items_to_queue(self)
+        else
+          update_lookup_table_for_all_users
         end
       end
 
