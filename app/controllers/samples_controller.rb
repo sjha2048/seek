@@ -104,7 +104,7 @@ class SamplesController < ApplicationController
 
   private
 
-  def sample_params(sample_type)
+  def sample_params(sample_type=nil)
     sample_type_param_keys = sample_type ? sample_type.sample_attributes.map(&:accessor_name).collect(&:to_sym) | sample_type.sample_attributes.map(&:method_name).collect(&:to_sym) : []
     params.require(:sample).permit(:sample_type_id, :other_creators, { project_ids: [] },
                                    { data: sample_type_param_keys }, { creator_ids: [] },
@@ -130,10 +130,10 @@ class SamplesController < ApplicationController
         end
       end
 
-      @samples = Sample.authorize_asset_collection(@data_file.extracted_samples.includes(sample_type: :sample_attributes), 'view')
+      @samples = @data_file.extracted_samples.includes(sample_type: :sample_attributes).authorized_for('view')
     elsif params[:sample_type_id]
       @sample_type = SampleType.includes(:sample_attributes).find(params[:sample_type_id])
-      @samples = Sample.authorize_asset_collection(@sample_type.samples, 'view')
+      @samples = @sample_type.samples.authorized_for('view')
     else
       find_assets
     end

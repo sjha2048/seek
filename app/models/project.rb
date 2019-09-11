@@ -6,7 +6,8 @@ class Project < ApplicationRecord
   title_trimmer
 
   has_and_belongs_to_many :investigations
-
+  has_many :studies, through: :investigations
+  has_many :assays, through: :studies
   has_and_belongs_to_many :data_files
   has_and_belongs_to_many :models
   has_and_belongs_to_many :sops
@@ -24,7 +25,7 @@ class Project < ApplicationRecord
   has_many :institutions, through: :work_groups, before_remove: :group_memberships_empty?, inverse_of: :projects
   has_many :group_memberships, through: :work_groups, inverse_of: :project
   # OVERRIDDEN in Seek::ProjectHierarchy if Seek::Config.project_hierarchy_enabled
-  has_many :people, -> { order('last_name ASC').distinct }, through: :group_memberships
+  has_many :people, -> { distinct }, through: :group_memberships
 
   has_many :former_group_memberships, -> { where('time_left_at IS NOT NULL AND time_left_at <= ?', Time.now) },
            through: :work_groups, source: :group_memberships
@@ -51,8 +52,6 @@ class Project < ApplicationRecord
   after_save :handle_pal_ids, if: -> { @pal_ids }
   after_save :handle_asset_housekeeper_ids, if: -> { @asset_housekeeper_ids }
 
-
-  scope :default_order, -> { order('title') }
   scope :without_programme, -> { where('programme_id IS NULL') }
 
   validates :web_page, url: {allow_nil: true, allow_blank: true}
@@ -74,9 +73,8 @@ class Project < ApplicationRecord
 
   # FIXME: temporary handler, projects need to support multiple programmes
   def programmes
-    [programme].compact
+    Programme.where(id: programme_id)
   end
-
 
   def group_memberships_empty?(institution)
     work_group = WorkGroup.where(['project_id=? AND institution_id=?', id, institution.id]).first
@@ -144,14 +142,6 @@ class Project < ApplicationRecord
     # infer all project's locations from the institutions where the person is member of
     locations = institutions.collect(&:country).select { |l| !l.blank? }
     locations
-  end
-
-  def studies
-    investigations.collect(&:studies).flatten.uniq
-  end
-
-  def assays
-    studies.collect(&:assays).flatten.uniq
   end
 
   def site_password

@@ -11,8 +11,6 @@ class Person < ApplicationRecord
 
   acts_as_yellow_pages
 
-  scope :default_order, -> { order('last_name, first_name') }
-
   before_save :first_person_admin_and_add_to_default_project
 
   acts_as_notifiee
@@ -41,6 +39,10 @@ class Person < ApplicationRecord
   has_many :current_work_groups, class_name: 'WorkGroup', through: :current_group_memberships,
                                  source: :work_group
 
+  has_many :projects,  -> { distinct }, through: :work_groups
+  has_many :current_projects,  -> { distinct }, through: :current_work_groups, source: :project
+  has_many :former_projects,  -> { distinct }, through: :former_work_groups, source: :project
+
   has_many :institutions, -> { distinct }, through: :work_groups
 
   has_many :favourite_group_memberships, dependent: :destroy
@@ -52,13 +54,19 @@ class Person < ApplicationRecord
                               Sample Event Investigation Study Assay Strain Workflow].freeze
 
   RELATED_RESOURCE_TYPES.each do |type|
-    has_many :"contributed_#{type.tableize}", foreign_key: :contributor_id, class_name: type
-    has_many :"created_#{type.tableize}", through: :assets_creators, source: :asset, source_type: type
-  end
+    plural = type.tableize
+    singular = plural.singularize
+    klass = type.constantize
 
-  RELATED_RESOURCE_TYPES.collect(&:tableize).each do |type|
-    define_method "related_#{type}" do
-      send("created_#{type}") | send("contributed_#{type}")
+    has_many :"contributed_#{plural}", foreign_key: :contributor_id, class_name: type
+    has_many :"created_#{plural}", through: :assets_creators, source: :asset, source_type: type
+
+    define_method "related_#{plural}" do
+      klass.where(id: send("related_#{singular}_ids"))
+    end
+
+    define_method "related_#{singular}_ids" do
+      send("contributed_#{singular}_ids") | send("created_#{singular}_ids")
     end
   end
 
@@ -197,22 +205,6 @@ class Person < ApplicationRecord
     Person.order('ID asc').collect do |p|
       { 'id' => p.id, 'name' => p.name, 'email' => p.email, 'projects' => p.projects.collect(&:title).join(', ') }
     end.to_json
-  end
-
-  def projects # ALL projects, former and current
-    # updating workgroups doesn't change groupmemberships until you save. And vice versa.
-    work_groups.collect(&:project).uniq | group_memberships.collect { |gm| gm.work_group.project }
-  end
-
-  def current_projects
-    (current_work_groups.collect(&:project).uniq | current_group_memberships.collect { |gm| gm.work_group.project })
-  end
-
-  # Projects that the person has let completely (i.e. not still involved with through a different institution)
-  def former_projects
-    old_projects = (former_work_groups.collect(&:project).uniq | former_group_memberships.collect { |gm| gm.work_group.project })
-
-    old_projects - current_projects
   end
 
   def member?

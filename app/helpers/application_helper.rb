@@ -70,18 +70,17 @@ module ApplicationHelper
   # provide the block that shows the URL to the resource, including the version if it is a versioned resource
   # label is based on the application name, for example <label>FAIRDOMHUB ID: </label>
   def persistent_resource_id(resource)
-
     # FIXME: this contains some duplication of Seek::Rdf::RdfGeneration#rdf_resource - however not every model includes that Module at this time.
     # ... its also a bit messy handling the version
-    url= if resource.class.name.include?("::Version")
-      URI.join(Seek::Config.site_base_host + "/", "#{resource.parent.class.name.tableize}/","#{resource.parent.id}?version=#{resource.version}").to_s
-    else
-      URI.join(Seek::Config.site_base_host + "/", "#{resource.class.name.tableize}/","#{resource.id}").to_s
+    url = if resource.class.name.include?('::Version')
+            URI.join(Seek::Config.site_base_host + '/', "#{resource.parent.class.name.tableize}/", "#{resource.parent.id}?version=#{resource.version}").to_s
+          else
+            URI.join(Seek::Config.site_base_host + '/', "#{resource.class.name.tableize}/", resource.id.to_s).to_s
     end
 
     content_tag :p, class: :id do
       content_tag(:strong) do
-        t('seek_id')+":"
+        t('seek_id') + ':'
       end + ' ' + link_to(url, url)
     end
   end
@@ -177,8 +176,13 @@ module ApplicationHelper
 
     result_collection.each do |res|
       tab = res.respond_to?(:tab) ? res.tab : res.class.name
-      results[tab] = { items: [], hidden_count: 0, is_external: (res.respond_to?(:is_external_search_result?) && res.is_external_search_result?) } unless results[tab]
+      results[tab] ||= { items: [],
+                         items_count: 0,
+                         hidden_count: 0,
+                         is_external: (res.respond_to?(:is_external_search_result?) && res.is_external_search_result?) }
+
       results[tab][:items] << res
+      results[tab][:items_count] += 1
     end
 
     results
@@ -242,7 +246,7 @@ module ApplicationHelper
     list_item.html_safe
   end
 
-  def contributor(contributor, avatar = false, size = 100, you_text = false)
+  def contributor(contributor, _avatar = false, _size = 100, _you_text = false)
     return unless contributor
 
     contributor_name = h(contributor.name)
@@ -276,7 +280,12 @@ module ApplicationHelper
     if resource && resource.respond_to?(:title) && resource.title
       h(resource.title)
     elsif PAGE_TITLES[controller_name]
-      PAGE_TITLES[controller_name]
+      title = ''
+      if @parent_resource
+        title << "#{h(@parent_resource.title)} - "
+      end
+      title << PAGE_TITLES[controller_name]
+      title
     else
       "The #{Seek::Config.application_name}"
     end
@@ -312,7 +321,7 @@ module ApplicationHelper
       truncated_result += "\n"
     end
     # Need some kind of whitespace before elipses or auto-link breaks
-    html = truncated_result.strip + ((truncated && ellipsis) ? "\n..." : '')
+    html = truncated_result.strip + (truncated && ellipsis ? "\n..." : '')
     html.html_safe
   end
 
@@ -416,7 +425,7 @@ module ApplicationHelper
     klass = klass_from_controller(controller_name)
     full_total = klass.count
     visible_total = if klass.authorization_supported?
-                      klass.all_authorized_for('view').count
+                      klass.authorized_for('view').count
                     elsif klass.is_a?(Person) && Seek::Config.is_virtualliver && User.current_user.nil?
                       0
                     else
@@ -435,11 +444,11 @@ module ApplicationHelper
   # to display funding codes on the 'show' page if present
   def show_funding_codes(item)
     return if item.funding_codes.empty?
-    html = content_tag(:strong,'Funding codes:')
-    html << content_tag(:ul,class:'funding-codes') do
+    html = content_tag(:strong, 'Funding codes:')
+    html << content_tag(:ul, class: 'funding-codes') do
       inner = ''
       item.funding_codes.each do |code|
-        inner += content_tag(:li,code)
+        inner += content_tag(:li, code)
       end
       inner.html_safe
     end
@@ -453,6 +462,11 @@ module ApplicationHelper
 
   def white_list(text)
     Rails::Html::WhiteListSanitizer.new.sanitize(text)
+  end
+
+  # whether manage attributes should be shown, dont show if editing (rather than new or managing)
+  def show_form_manage_specific_attributes?
+    !(action_name == 'edit' || action_name == 'update')
   end
 
   PAGE_TITLES = { 'home' => 'Home', 'projects' => I18n.t('project').pluralize, 'institutions' => 'Institutions', 'people' => 'People', 'sessions' => 'Login', 'users' => 'Signup', 'search' => 'Search',

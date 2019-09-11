@@ -256,10 +256,6 @@ class PublicationTest < ActiveSupport::TestCase
     assert_not_nil x.attributes['uuid']
   end
 
-  test 'sort by published_date' do
-    assert_equal Publication.all.sort_by(&:published_date).reverse, Publication.default_order
-  end
-
   test 'title trimmed' do
     x = Factory :publication, title: ' a pub'
     assert_equal('a pub', x.title)
@@ -479,4 +475,23 @@ class PublicationTest < ActiveSupport::TestCase
     assert item2.has_jerm_contributor?
   end
 
+  test 'related data files also includes those from assays' do
+    assay = Factory(:assay)
+    assay_data_file = Factory(:data_file, assays: [assay])
+    data_file = Factory(:data_file)
+    publication = Factory(:publication, assays: [assay], data_files: [data_file])
+
+    assert_includes publication.related_data_files, assay_data_file
+    assert_includes publication.related_data_files, data_file
+  end
+
+  test 'related models also includes those from assays' do
+    assay = Factory(:assay)
+    assay_model = Factory(:model, assays: [assay])
+    model = Factory(:model)
+    publication = Factory(:publication, assays: [assay], models: [model])
+
+    assert_includes publication.related_models, assay_model
+    assert_includes publication.related_models, model
+  end
 end

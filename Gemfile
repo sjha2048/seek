@@ -56,7 +56,7 @@ gem 'will_paginate', '~> 3.1'
 gem 'yaml_db'
 gem 'rails_autolink'
 gem 'rfc-822'
-gem 'nokogiri', '~> 1.8.1'
+gem 'nokogiri', '>= 1.10.4'
 gem 'rdf-virtuoso', git: 'https://github.com/ruby-rdf/rdf-virtuoso', branch: 'develop'
 gem 'terrapin'
 gem 'lograge'
@@ -122,6 +122,8 @@ gem 'rails-html-sanitizer'
 
 # Rails 5.2 upgrade
 gem 'bootsnap', '>= 1.1.0', require: false
+
+gem 'activerecord-import'
 
 # javascript assets from https://rails-assets.org
 gem 'bundler', '>= 1.8.4'

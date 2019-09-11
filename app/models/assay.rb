@@ -4,11 +4,6 @@ class Assay < ApplicationRecord
   include Seek::Taggable
   include Seek::ProjectHierarchies::ItemsProjectsExtension if Seek::Config.project_hierarchy_enabled
 
-  # needs to be declared before acts_as_isa, else ProjectAssociation module gets pulled in
-  def projects
-    study.try(:projects) || []
-  end
-
   # needs to before acts_as_isa - otherwise auto_index=>false is overridden by Seek::Search::CommonFields
   if Seek::Config.solr_enabled
     searchable(auto_index: false) do
@@ -209,6 +204,10 @@ class Assay < ApplicationRecord
     set_assay_assets_for('DataFile', attributes)
   end
 
+  def self.filter_by_projects(projects)
+    joins(:projects).where(studies: { investigations: { investigations_projects: { project_id: projects } } })
+  end
+
   private
 
   def set_assay_assets_for(type, attributes)
@@ -230,5 +229,9 @@ class Assay < ApplicationRecord
 
     self.assay_assets = (other_assay_assets + new_type_assay_assets)
     self.assay_assets
+  end
+
+  def related_publication_ids
+    publication_ids
   end
 end
