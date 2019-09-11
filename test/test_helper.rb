@@ -27,6 +27,25 @@ Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new]
 
 Minitest::Test.i_suck_and_my_tests_are_order_dependent!
 
+module ActiveRecord
+  class FixtureSet
+    class << self
+      alias_method :orig_create_fixtures, :create_fixtures
+      def create_fixtures(*args)
+        orig_create_fixtures(*args).each do |f|
+          klass = f.model_class
+          if klass.respond_to?(:authorization_supported?) && klass.authorization_supported? && !klass.lookup_table_consistent?(nil)
+            Rails.logger.info "Updating lookup for #{klass.name}"
+            klass.transaction do
+              klass.find_each(&:update_lookup_table_for_all_users)
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 module ActionView
   class Renderer
     def self.get_alternative(key)
