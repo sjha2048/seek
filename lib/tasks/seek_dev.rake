@@ -63,7 +63,6 @@ namespace :seek_dev do
   task(benchmark_auth_lookup: :environment) do
     start_time = Time.now
     puts "Benchmarking!"
-    puts "Auth lookup enabled: #{Seek::Config.auth_lookup_enabled}"
     u = User.first
     u2 = User.last
     Seek::Util.authorized_types.each do |type|
