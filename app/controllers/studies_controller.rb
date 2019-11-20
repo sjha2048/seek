@@ -119,6 +119,10 @@ class StudiesController < ApplicationController
     end
   end
 
+  def batch_uploader
+
+  end
+
   private
   def validate_person_responsible(p)
     if (!p[:person_responsible_id].nil?) && (!Person.exists?(p[:person_responsible_id]))
