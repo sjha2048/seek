@@ -312,6 +312,8 @@ SEEK::Application.routes.draw do
   resources :studies do
     collection do
       get :preview
+      get :batch_uploader
+      post :create_content_blob
       post :investigation_selected_ajax
       post :items_for_result
     end
