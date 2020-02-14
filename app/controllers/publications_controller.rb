@@ -19,11 +19,8 @@ class PublicationsController < ApplicationController
   api_actions :index, :show
 
   def export
-    @query = Publication.ransack(params[:query])
-    @publications = @query.result(distinct: true)
-                        .includes(:publication_authors, :projects)
-    # @query.build_condition
-    @query.build_sort if @query.sorts.empty?
+    page_and_sort_params[:page] = 'all'
+    find_assets
 
     respond_to do |format|
       format.html
