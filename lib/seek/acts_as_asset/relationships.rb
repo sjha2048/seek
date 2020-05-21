@@ -53,7 +53,7 @@ module Seek
           has_many :asset_links, dependent: :destroy, as: :asset, foreign_key: :asset_id, inverse_of: :asset
           has_many :discussion_links, -> { where(AssetLink.discussion.where_values_hash) }, class_name: 'AssetLink', as: :asset, dependent: :destroy, inverse_of: :asset
           accepts_nested_attributes_for :asset_links, allow_destroy:true
-          validates_associated :discussion_links
+          validates_associated :asset_links
 
           has_filter :creator
 
