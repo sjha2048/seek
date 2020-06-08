@@ -184,6 +184,7 @@ class AvatarsController < ApplicationController
     begin
       # this will find person/project/institution which "owns" in the URL (if it is correct)
       @avatar_owner_instance = @avatar_for.constantize.find(@avatar_for_id)
+      @parent_resource = @avatar_owner_instance # Breadcrumbs
     rescue ActiveRecord::RecordNotFound
       flash[:error] = "Could not find the #{@avatar_for.downcase} for this avatar."
       redirect_to(root_path)

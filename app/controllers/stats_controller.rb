@@ -49,6 +49,12 @@ class StatsController < ApplicationController
 
   private
 
+  def add_breadcrumbs
+    add_index_breadcrumb 'projects'
+    add_show_breadcrumb @project
+    add_breadcrumb 'Dashboard'
+  end
+
   def get_dates
     @start_date = Date.parse(params[:start_date])
     @end_date = Date.parse(params[:end_date])

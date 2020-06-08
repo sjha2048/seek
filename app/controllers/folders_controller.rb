@@ -106,6 +106,7 @@ class FoldersController < ApplicationController
 
   def check_project
     @project = Project.find(params[:project_id])
+    @parent_resource = @project # For breadcrumbs
     if @project.nil? || !current_person.projects.include?(@project)
       error("You must be a member of the project", "is invalid (not in project)")
     end

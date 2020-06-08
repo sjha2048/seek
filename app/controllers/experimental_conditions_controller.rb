@@ -117,6 +117,7 @@ class ExperimentalConditionsController < ApplicationController
       sop = Sop.find(params[:sop_id])
       if sop.can_edit? current_user
         @sop = sop
+        @parent_resource = @sop # For breadcrumbs
         find_display_asset @sop
       else
         respond_to do |format|

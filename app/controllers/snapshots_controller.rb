@@ -119,4 +119,13 @@ class SnapshotsController < ApplicationController
   def metadata_params
     params.require(:metadata).permit(:access_right, :license, :embargo_date, :access_conditions, creators: [:name]).delete_if { |k,v| v.blank? }
   end
+
+  def add_breadcrumbs
+    add_index_breadcrumb @resource.class.name.downcase.pluralize
+    add_show_breadcrumb @resource
+    if @snapshot
+      add_breadcrumb "Snapshot #{@snapshot.snapshot_number}",
+                     polymorphic_path([@resource, @snapshot])
+    end
+  end
 end

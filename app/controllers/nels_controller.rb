@@ -83,6 +83,7 @@ class NelsController < ApplicationController
 
   def find_and_authorize_assay
     @assay = Assay.find(params[:assay_id])
+    @parent_resource = @assay # For breadcrumbs
 
     unless @assay.can_edit?
       flash[:error] = 'You are not authorized to add NeLS data to this assay.'

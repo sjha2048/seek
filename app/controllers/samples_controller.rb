@@ -123,6 +123,7 @@ class SamplesController < ApplicationController
   def find_index_assets
     if params[:data_file_id]
       @data_file = DataFile.find(params[:data_file_id])
+      @parent_resource = @data_file # For breadcrumbs
 
       unless @data_file.can_view?
         flash[:error] = 'You are not authorize to view samples from this data file'
@@ -134,6 +135,7 @@ class SamplesController < ApplicationController
       @samples = @data_file.extracted_samples.includes(sample_type: :sample_attributes).authorized_for('view')
     elsif params[:sample_type_id]
       @sample_type = SampleType.includes(:sample_attributes).find(params[:sample_type_id])
+      @parent_resource = @sample_type # For breadcrumbs
       @samples = @sample_type.samples.authorized_for('view')
     else
       find_assets
