@@ -1,6 +1,7 @@
 class StatsController < ApplicationController
   before_action :is_user_admin_auth
   before_action :get_dates, only: %i[asset_activity contributors contributions asset_accessibility]
+  include Seek::BreadCrumbs
 
   def dashboard
     respond_to do |format|
@@ -49,12 +50,6 @@ class StatsController < ApplicationController
 
   private
 
-  def add_breadcrumbs
-    add_index_breadcrumb 'projects'
-    add_show_breadcrumb @project
-    add_breadcrumb 'Dashboard'
-  end
-
   def get_dates
     @start_date = Date.parse(params[:start_date])
     @end_date = Date.parse(params[:end_date])
@@ -65,5 +60,17 @@ class StatsController < ApplicationController
 
   def stats
     Seek::Stats::DashboardStats.new
+  end
+
+  def add_parent_breadcrumbs
+    if @parent_resource
+      super
+    else
+      add_breadcrumb 'Administration', admin_path
+    end
+  end
+
+  def add_self_breadcrumbs
+    add_self_breadcrumb
   end
 end

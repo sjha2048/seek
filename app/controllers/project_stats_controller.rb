@@ -11,6 +11,7 @@ class ProjectStatsController < StatsController
   def find_and_authorize_project
     name = t('project')
     @project = Project.find_by_id(params[:project_id])
+    @parent_resource = @project
     if @project.nil?
       respond_to do |format|
         flash[:error] = "The #{name.humanize} does not exist!"

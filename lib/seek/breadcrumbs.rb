@@ -18,22 +18,41 @@ module Seek
 
     def add_parent_breadcrumbs
       if @parent_resource
-        add_index_breadcrumb @parent_resource.class.name.underscore.pluralize, nil, path: polymorphic_path([@parent_resource, controller_name])
-        add_resource_breadcrumb @parent_resource
+        add_parent_index_breadcrumb
+        add_parent_breadcrumb
       end
     end
 
-    def add_self_breadcrumbs
-      add_index_breadcrumb(controller_name)
+    def add_parent_index_breadcrumb
+      add_index_breadcrumb(@parent_resource.class.name.underscore.pluralize)
+    end
 
+    def add_parent_breadcrumb
+      add_resource_breadcrumb @parent_resource
+    end
+
+    def add_self_breadcrumbs
+      add_self_index_breadcrumb
+      add_self_breadcrumb
+    end
+
+    def add_self_index_breadcrumb
+      add_index_breadcrumb(controller_name, nil,
+                           path: @parent_resource ? polymorphic_path([@parent_resource, controller_name]) : nil)
+    end
+
+    def add_self_breadcrumb
       resource = instance_variable_get("@#{controller_name.singularize}")
       if resource && resource.respond_to?(:new_record?) && !resource.new_record?
-        add_resource_breadcrumb(resource)
+        add_resource_breadcrumb(resource, nil,
+                                path: @parent_resource ? polymorphic_path([@parent_resource, resource]) : nil)
       end
     end
 
     def add_action_breadcrumb
-      unless action_name == 'show'
+      resource = instance_variable_get("@#{controller_name.singularize}")
+
+      unless action_name == 'show' || action_name == 'index'
         case action_name
         when 'new_object_based_on_existing_one'
           breadcrumb_name = "New #{controller_name.humanize.singularize.downcase} based on this one"
@@ -41,8 +60,6 @@ module Seek
           breadcrumb_name = "New #{controller_name.humanize.singularize.downcase} details"
         when 'create'
           breadcrumb_name = "New"
-        when 'index'
-          breadcrumb_name = "#{t(controller_name.singularize, default: controller_name.singularize.humanize).pluralize} Index"
         else
           breadcrumb_name = action_name.capitalize.humanize
         end
@@ -82,10 +99,10 @@ module Seek
       add_breadcrumb breadcrumb_name, path
     end
 
-    def add_resource_breadcrumb(resource, breadcrumb_name = nil)
+    def add_resource_breadcrumb(resource, breadcrumb_name = nil, path: nil)
       breadcrumb_name ||= (resource.respond_to?(:title) ? resource.title : resource.id).to_s
-      add_breadcrumb breadcrumb_name, polymorphic_path(resource)
+      path ||= polymorphic_path(resource)
+      add_breadcrumb breadcrumb_name, path
     end
-
   end
 end
