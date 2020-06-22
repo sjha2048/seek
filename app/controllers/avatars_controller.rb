@@ -119,7 +119,6 @@ class AvatarsController < ApplicationController
     get_parent_resource
     raise ActiveRecord::RecordNotFound unless @parent_resource
     @avatar_owner_instance = @parent_resource # legacy
-    @parent_resource = @avatar_owner_instance # Breadcrumbs
   end
 
   def authorize_owner
