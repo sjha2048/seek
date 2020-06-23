@@ -144,6 +144,7 @@ class StudiedFactorsController < ApplicationController
     data_file = DataFile.find(params[:data_file_id])
     if data_file.can_edit? current_user
       @data_file = data_file
+      @parent_resource = @data_file # For breadcrumbs
       find_display_asset @data_file
     else
       respond_to do |format|

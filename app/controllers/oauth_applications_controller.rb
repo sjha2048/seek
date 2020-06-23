@@ -43,17 +43,18 @@ class OauthApplicationsController < Doorkeeper::ApplicationsController
       flash[:error] = 'This page is only available to members.'
       redirect_to root_path
     end
+    @parent_resource = current_user
   end
-
-  def add_breadcrumbs
-    add_breadcrumb 'Home', root_path
-    add_index_breadcrumb 'people'
-    add_show_breadcrumb current_user&.person
-    add_index_breadcrumb 'oauth_applications'
-    add_breadcrumb 'New' if action_name == 'new'
-    add_breadcrumb @application.name, oauth_application_path(@application) if defined? @application
-    add_breadcrumb 'Edit' if action_name == 'edit'
-  end
+  #
+  # def add_breadcrumbs
+  #   add_breadcrumb 'Home', root_path
+  #   add_index_breadcrumb 'people'
+  #   add_show_breadcrumb current_user&.person
+  #   add_index_breadcrumb 'oauth_applications'
+  #   add_breadcrumb 'New' if action_name == 'new'
+  #   add_breadcrumb @application.name, oauth_application_path(@application) if defined? @application
+  #   add_breadcrumb 'Edit' if action_name == 'edit'
+  # end
 
   def application_params
     params.require(:doorkeeper_application)

@@ -21,7 +21,7 @@ class IdentitiesController < ApplicationController
 
   def find_and_check_user
     @user = User.find(params[:user_id])
-    @parent_resource = @user&.person
+    @parent_resource = @user
 
     if current_user != @user
       error("User not found (id not authorized)", "is invalid (not owner)")

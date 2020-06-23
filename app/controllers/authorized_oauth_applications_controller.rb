@@ -14,6 +14,6 @@ class AuthorizedOauthApplicationsController < Doorkeeper::AuthorizedApplications
   end
 
   def assign_person
-    @parent_resource = current_user&.person
+    @parent_resource = current_user
   end
 end

@@ -18,17 +18,18 @@ module Seek
 
     def add_parent_breadcrumbs
       if @parent_resource
-        add_parent_index_breadcrumb
-        add_parent_breadcrumb
+        parent_resource = @parent_resource.is_a?(User) ? @parent_resource.person : @parent_resource
+        add_parent_index_breadcrumb(parent_resource)
+        add_parent_breadcrumb(parent_resource)
       end
     end
 
-    def add_parent_index_breadcrumb
-      add_index_breadcrumb(@parent_resource.class.name.underscore.pluralize)
+    def add_parent_index_breadcrumb(parent_resource = @parent_resource)
+      add_index_breadcrumb(parent_resource.class.name.underscore.pluralize)
     end
 
-    def add_parent_breadcrumb
-      add_resource_breadcrumb @parent_resource
+    def add_parent_breadcrumb(parent_resource = @parent_resource)
+      add_resource_breadcrumb(parent_resource)
     end
 
     def add_self_breadcrumbs
@@ -71,7 +72,6 @@ module Seek
         add_breadcrumb breadcrumb_name, url
       end
     end
-
 
     def add_index_breadcrumb(controller_name, breadcrumb_name = nil, path: nil)
       unless breadcrumb_name
