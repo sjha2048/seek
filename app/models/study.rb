@@ -25,9 +25,9 @@ class Study < ApplicationRecord
   has_one :custom_metadata, as: :item
   accepts_nested_attributes_for :custom_metadata
 
-  belongs_to :person_responsible, :class_name => "Person"
+  belongs_to :person_responsible, :class_name => 'Person'
 
-  validates :investigation, presence: { message: "Investigation is blank or invalid" }, projects: true
+  validates :investigation, presence: { message: 'Investigation is blank or invalid' }, projects: true
 
   enforce_authorization_on_association :investigation, :view
 
@@ -48,7 +48,7 @@ class Study < ApplicationRecord
 
         study_id = data[0].value
         if !studies_data_files.key?(study_id)
-          studies_data_files[study_id] = {data_file:[], data_file_description:[], data_file_version:[]}
+          studies_data_files[study_id] = {data_file: [], data_file_description: [], data_file_version: []}
         end
 
 
@@ -66,7 +66,7 @@ class Study < ApplicationRecord
   def self.extract_studies_from_file(studies_file)
     studies = []
     parsed_sheet = Seek::Templates::StudiesReader.new(studies_file)
-    metadata_type = CustomMetadataType.new(title: 'MIAPPE metadata', supported_type:'Study')
+    metadata_type = CustomMetadataType.new(title: 'MIAPPE metadata', supported_type: 'Study')
 
     columns = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
     study_start_row_index = 4
@@ -77,8 +77,8 @@ class Study < ApplicationRecord
           title: data[1].value,
           description: data[2].value,
           custom_metadata: CustomMetadata.new(
-              custom_metadata_type: metadata_type,
-              data: generate_metadata(data)
+            custom_metadata_type: metadata_type,
+            data: generate_metadata(data)
           )
         )
         study_exist(study_id)
@@ -110,21 +110,20 @@ class Study < ApplicationRecord
   end
 
 
-  def self.unzip_batch(file_path)
+  def self.unzip_batch(file_path, user_uuid)
     unzipped_files = Zip::File.open(file_path)
-    user_uuid = "#{User.current_user.attributes["uuid"]}"
     Dir.mkdir("#{Rails.root}/tmp/#{user_uuid}_studies_upload") unless File.exists?("#{Rails.root}/tmp/#{user_uuid}_studies_upload")
     tmp_dir = "#{Rails.root}/tmp/#{user_uuid}_studies_upload/"
     study_data = []
     studies = []
     unzipped_files.entries.each do |file|
       file_name = File.basename(file.name)
-      if file.name.include?('/data/') && file.ftype != :directory
+      if file.name.include?('data/') && file.ftype != :directory
         study_data << file
         Dir.mkdir "#{tmp_dir}/data" unless File.exists? "#{tmp_dir}/data"
         file.extract("#{tmp_dir}/data/#{file_name}") unless File.exists? "#{tmp_dir}/data/#{file_name}"
       elsif file.ftype == :file
-        studies << file_name
+        studies << file
         file.extract("#{tmp_dir}#{file_name}") unless File.exists? "#{tmp_dir}#{file_name}"
       end
     end
@@ -133,8 +132,8 @@ class Study < ApplicationRecord
 
   def self.study_exist(study_metadata_id)
     existing_studies = []
-    find_metadata = CustomMetadata.where("json_metadata LIKE ?", "%#{study_metadata_id}%").last
-    if !find_metadata.nil?
+    find_metadata = CustomMetadata.where('json_metadata LIKE ?', "%#{study_metadata_id}%").last
+    unless find_metadata.nil?
       study_id = find_metadata.item_id
       study = Study.where(id: study_id)
       existing_studies << study
@@ -143,7 +142,7 @@ class Study < ApplicationRecord
 
   def self.check_study_is_valid(study, metadata)
     mandatory_fields = %w[id title study_start_date contact_institution geographic_location_country experimental_site_name
-                        description_of_the_experimental_design observation_unit_description description_of_growth_facility]
+                          description_of_the_experimental_design observation_unit_description description_of_growth_facility]
     missing_fields = []
 
     mandatory_fields.each { |mandatory_f|
