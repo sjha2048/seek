@@ -129,7 +129,7 @@ class StudiesController < ApplicationController
                 end
     tempzip_path = params[:content_blobs][0][:data].tempfile.path
     data_files, studies = Study.unzip_batch(tempzip_path, user_uuid)
-    study_filename = studies.first
+    study_filename = File.basename(studies.first.to_s)
     studies_file = ContentBlob.new
     studies_file.tmp_io_object = File.open("#{Rails.root}/tmp/#{user_uuid}_studies_upload/#{study_filename}")
     studies_file.original_filename = "#{study_filename}"
@@ -150,7 +150,7 @@ class StudiesController < ApplicationController
                 else
                   'user_uuid'
                 end
-    metadata_types = CustomMetadataType.where(title: 'MIAPPE metadata', supported_type:'Study')
+    metadata_types = CustomMetadataType.where(title: 'MIAPPE metadata', supported_type: 'Study')
     studies_length = params[:studies][:title].length
     studies_uploaded = false
     data_file_uploaded = false
@@ -163,7 +163,7 @@ class StudiesController < ApplicationController
         investigation_id: params[:study][:investigation_id],
         person_responsible_id: params[:study][:person_responsible_id],
         custom_metadata: CustomMetadata.new(
-          custom_metadata_type: metadata_types.first,
+          custom_metadata_type: metadata_types.last,
           data: metadata
         )
       }
@@ -255,7 +255,7 @@ class StudiesController < ApplicationController
       observation_unit_description: studies_meta_data[:observationUnitDescription][index],
       description_of_growth_facility: studies_meta_data[:descriptionOfGrowthFacility][index],
       type_of_growth_facility: studies_meta_data[:typeOfGrowthFacility][index],
-      cultural_practices: studies_meta_data[:culturalPractices][index],
+      cultural_practices: studies_meta_data[:culturalPractices][index]
     }
     metadata
   end
