@@ -13,7 +13,12 @@
             </p>
         <% end %>
 
-        <%= persistent_resource_id(@project) %>
+        <%
+=begin%>
+ #uncomment this to enable seek id
+ <%= persistent_resource_id(@project) %> 
+<%
+=end%>
 
         <%= show_funding_codes(@project) %>
 
@@ -29,19 +34,29 @@
             </p>
         <% end %>
 
-        <% if Seek::Config.organisms_enabled %>
+        <%
+=begin%>
+ #uncomment this to display organisms 
+ <% if Seek::Config.organisms_enabled %>
             <p>
               <strong>Organisms:</strong>
               <%= organisms_link_list @project.organisms -%>
             </p>
-        <% end %>
+        <% end %> 
+<%
+=end%>
       </div>
 
       <div class="col-md-6">
-        <p class="pals">
+        <%
+=begin%>
+ #uncomment this to display fairdom pals
+ <p class="pals">
           <strong><%= Seek::Config.dm_project_name %> <%= t('pal').pluralize %>:</strong>
           <%= pals_link_list @project -%>
-        </p>
+        </p> 
+<%
+=end%>
 
         <% if @project.respond_to?(:project_coordinators) %>
             <p class="project_coordinators">
