@@ -12,10 +12,15 @@
   <%= f.text_area :description, :rows => 5, :class=>"form-control" -%>
 </div>
 
-<div class="form-group">
+<%
+=begin%>
+#uncomment this to enable funding codes field
+ <div class="form-group">
   <%= f.label :funding_codes -%>
   <%= tags_input('project[funding_codes]', @project.funding_codes) %>
-</div>
+</div> 
+<%
+=end%>
 
 <div class="form-group">
   <%= f.label "Public Web page"-%>
@@ -57,12 +62,22 @@
     <%= render :partial=> "projects/select_add_current_user_to_project" %>
 <% end %>
 
-<% if Seek::Config.organisms_enabled %>
+<%
+=begin%>
+#uncomment this to enable selection of organisms 
+ <% if Seek::Config.organisms_enabled %>
   <%= f.fancy_multiselect :organisms, { possibilities: Organism.order(:title).all, hidden: false } %>
-<% end %>
+<% end %> 
+<%
+=end%>
 
 <% if @project.can_manage? %>
-    <%= render :partial => 'assets/license_selector', :locals => { :resource => @project, :label=>"Default License",:accessor=>:default_license } %>
+    <%
+    #uncomment this to enable license selector for the projects
+=begin%>
+ <%= render :partial => 'assets/license_selector', :locals => { :resource => @project, :label=>"Default License",:accessor=>:default_license } %> 
+<%
+=end%>
 
     <%= folding_panel('Default Sharing Policy', false, id: 'sharing_form',
                       help_text: "Here you can choose to configure a default sharing policy that is applied to new resources created as part of this #{t('project').downcase}.") do %>

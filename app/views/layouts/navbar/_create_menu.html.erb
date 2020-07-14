@@ -8,15 +8,15 @@
     <li role="presentation" class="dropdown-header visible-md">Create</li>
 
     <li role="presentation" class="dropdown-header"><%= t("menu.yellow_pages") -%></li>
-    <% if can_create_programmes? %>
+    <%# if can_create_programmes? %>
         <li><%= link_to t('programme'), new_programme_path %></li>
-    <% end %>
-    <% if can_create_projects? %>
+    <%# end %>
+    <%# if can_create_projects? %>
         <li><%= link_to t("project"), new_project_path %></li>
-    <% end %>
-    <% if can_create_institutions? %>
+    <%# end %>
+    <%# if can_create_institutions? %>
         <li><%= link_to t("institution"), new_institution_path %></li>
-    <% end %>
+    <%# end %>
     <% if can_create_profiles? %>
         <li><%= link_to t("profile"), new_person_path %></li>
     <% end %>
