@@ -1,7 +1,10 @@
 name: docker push 
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - master
+      - seek-1.10
 jobs:
   build:
     
