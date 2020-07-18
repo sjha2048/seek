@@ -5,18 +5,20 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li role="presentation" class="dropdown-header visible-md">Create</li>
+    <%
+=begin%>
+ <li role="presentation" class="dropdown-header visible-md">Create</li>
 
     <li role="presentation" class="dropdown-header"><%= t("menu.yellow_pages") -%></li>
-    <%# if can_create_programmes? %>
+    <% if can_create_programmes? %>
         <li><%= link_to t('programme'), new_programme_path %></li>
-    <%# end %>
-    <%# if can_create_projects? %>
+    <% end %>
+    <% if can_create_projects? %>
         <li><%= link_to t("project"), new_project_path %></li>
-    <%# end %>
-    <%# if can_create_institutions? %>
+    <% end %>
+    <% if can_create_institutions? %>
         <li><%= link_to t("institution"), new_institution_path %></li>
-    <%# end %>
+    <% end %>
     <% if can_create_profiles? %>
         <li><%= link_to t("profile"), new_person_path %></li>
     <% end %>
@@ -60,11 +62,20 @@
 
     <% else %>
         <li role="presentation" class="dropdown-header"><span style="color:red">You cannot add assets or other items until you are a member of a <%= t('project') %>.</span></li>
-    <% end %>
-
-
-
-
+    <% end %> 
+<%
+=end%>
+    <li role="presentation" class="dropdown-header visible-md">Create</li>
+        <li role="presentation" class="dropdown-header">People</li>
+            <li><%= link_to t("institution"), new_institution_path %></li>
+        <li role="presentation" class="dropdown-header">Projects</li>
+            <li><%= link_to t("project"), new_project_path %></li>
+            <li><%= link_to t("document"), new_document_path %></li>
+            <li><%= link_to t("publication"), new_publication_path %></li>
+        <li role="presentation" class="dropdown-header">Meetings</li>
+            <li><%= link_to "Meetings", new_event_path %></li>
+            <li><%= link_to "Abstract", new_sop_path %></li>
+            <li><%= link_to t("presentation"), new_presentation_path %></li>
   </ul>
 
 </li>
