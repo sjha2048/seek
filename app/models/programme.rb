@@ -121,12 +121,14 @@ class Programme < ApplicationRecord
   end
 
   # callback, activates if current user is an admin or nil, otherwise it needs activating
+  # modified callback, activates if the user is logged in
   def activate_on_create
-    self.is_activated = if User.current_user && !User.current_user.is_admin?
-                          false
-                        else
-                          true
-                        end
-    true
+    # self.is_activated = if User.logged_in?
+    #                       false
+    #                     else
+    #                       true
+    #                     end
+    # true
+    self.is_activated = true
   end
 end

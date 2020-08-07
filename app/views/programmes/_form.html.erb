@@ -2,7 +2,7 @@
 
 <%= f.error_messages %>
 
-<%= panel("#{t('programme')} Details") do %>
+<%= panel("#{t('project')} Details") do %>
     <div class="form-group">
       <%= f.label :title, class: 'required' -%>
       <%= f.text_field :title, :class=>"form-control" -%>
@@ -30,14 +30,14 @@
 <% end %>
 
 <% if admin_logged_in? %>
-    <%= render :partial => "projects/project_selector", :locals => { :resource => @programme,
+    <%= render :partial => "project_selector", :locals => { :resource => @programme,
                                                                      :allow_nil => true,
                                                                      :possibilities=>(Project.without_programme | @programme.projects) } %>
 <% end %>
 
 <% if @programme.can_manage? %>
 
-<%= panel("#{t('programme')} Administrators") do %>
+<%= panel("#{t('project')} Administrators (Please add yourself an an administrator)") do %>
         <%= programme_administrators_input_box(@programme) %>
 <% end %>
 

@@ -10,9 +10,13 @@
 %>
 
 <div class="pull-right">
-  <% if show_new_button && controller_model.can_create? %>
+  <%
+=begin%>
+ <% if show_new_button && controller_model.can_create? %>
     <%= button_link_to(new_item_label, "new", new_item_path) %>
-  <% end %>
+  <% end %> 
+<%
+=end%>
 
   <% if faceted_browsing_enabled && items.any? %>
     <%= button_link_to('Advanced filtering', 'filter', { user_enable_facet: true }, { style: params[:user_enable_facet] == 'true' ? 'display: none' : ''}) %>
@@ -24,14 +28,21 @@
   <% end %>
 </div>
 
-<%= index_title(title) %>
-
+<%
+=begin%>
+ <%= index_title(title) %> 
+<%
+=end%>
 <% if subtitle %>
   <h2><%= subtitle %></h2>
 <% end %>
 
 <div class="index-container">
-  <%= render partial: 'assets/resource_filtering' if Seek::Config.filtering_enabled && !faceted_browsing %>
+  <%
+=begin%>
+ <%= render partial: 'assets/resource_filtering' if Seek::Config.filtering_enabled && !faceted_browsing %> 
+<%
+=end%>
   <div class="index-content">
     <% unless faceted_browsing %>
       <%# filter debugging - remove me eventually %>
@@ -46,12 +57,20 @@
         </div>
       <% end %>
       <%= render partial: 'assets/resource_sorting', locals: { items: items } %>
-      <%= render partial: 'assets/resource_counts' %>
+      <%
+=begin%>
+ <%= render partial: 'assets/resource_counts' %> 
+<%
+=end%>
       <%= render partial: 'assets/resource_active_filters' if Seek::Config.filtering_enabled %>
     <% end %>
 
     <% if faceted_browsing %>
-      <%= render partial: 'faceted_browsing/faceted_browsing', object: items %>
+      <%
+=begin%>
+ <%= render partial: 'faceted_browsing/faceted_browsing', object: items %> 
+<%
+=end%>
     <% else %>
       <%= render partial: 'general/index_facets_or_paged', locals: { items: items } %>
     <% end %>

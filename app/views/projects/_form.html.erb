@@ -54,9 +54,14 @@
     </div>
 <% end -%>
 
-<% if Seek::Config.programmes_enabled && admin_or_programme_administrator_logged_in? %>
+<%
+=begin%>
+# uncomment this to add associated projects in meetings
+ <% if Seek::Config.programmes_enabled && admin_or_programme_administrator_logged_in? %>
     <%= render :partial=>"projects/programme_selection", :locals=>{:f=>f} -%>
-<% end %>
+<% end %> 
+<%
+=end%>
 
 <% unless project %>
     <%= render :partial=> "projects/select_add_current_user_to_project" %>
