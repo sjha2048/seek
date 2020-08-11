@@ -8,18 +8,18 @@
       If you register but are not a member of a <%= t('project') %> you will not be able to add new content. You will need to contact a <%= t('project') %> administrator to ask to be assigned to that Project,
       or you can <%= help_link(:join_project,link_text:'Request to join') %> from the <%= t('project') %> page.
       <% if Seek::Config.programme_user_creation_enabled && Seek::Config.programmes_enabled %>
-        You can also to create and administer your own <%= t('project').pluralize %>, by <%= help_link(:programme_self_management,link_text:'Creating and managing your own Programme space') %>.
+        You can also to create and administer your own projects and meetings by <%= help_link(:programme_self_management,link_text:'Creating and managing your own Programme space') %>.
       <% end %>
     </p>
   <div class="row">
     <div class="col-sm-4">
-      <label><%= t('project').pluralize %></label>
+      <label>Meetings</label>
       <%= select_tag "projects",
-                     options_for_select(Project.all.sort_by(&:title).collect { |p| [p.title, p.id] }|[['Others', 0]],
+                     options_for_select(Project.all.sort_by(&:title).collect { |p| [p.title, p.id] },
                                         selected: params['projects']),
                      { multiple: true, class: 'form-control'} -%>
       <div style='display: none' class="form-group other">
-        <label>Other <%= t('project').pluralize %></label>
+        <label>New <%= t('project').pluralize %></label>
         <%= text_field_tag :other_projects, params['other_projects'], class: 'form-control' %>
       </div>
     </div>
@@ -27,11 +27,11 @@
     <div class="col-sm-4">
       <label>Institutions</label>
       <%= select_tag "institutions",
-                     options_for_select(Institution.all.sort_by(&:title).collect { |i| [i.title, i.id] }|[['Others', 0]],
+                     options_for_select(Institution.all.sort_by(&:title).collect { |i| [i.title, i.id] },
                                         selected: params['institutions']),
                      { multiple: true, class: 'form-control'} -%>
       <div style='display: none' class="form-group other">
-        <label>Other institutions</label>
+        <label>New institution</label>
         <%= text_field_tag :other_institutions, params['other_institutions'], class: 'form-control' %>
       </div>
     </div>
