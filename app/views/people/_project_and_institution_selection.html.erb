@@ -15,7 +15,7 @@
     <div class="col-sm-4">
       <label>Meetings</label>
       <%= select_tag "projects",
-                     options_for_select(Project.all.sort_by(&:title).collect { |p| [p.title, p.id] },
+                     options_for_select(Project.all.sort_by(&:title).collect { |p| [p.title, p.id] }|[['New', 0]],
                                         selected: params['projects']),
                      { multiple: true, class: 'form-control'} -%>
       <div style='display: none' class="form-group other">
@@ -27,7 +27,7 @@
     <div class="col-sm-4">
       <label>Institutions</label>
       <%= select_tag "institutions",
-                     options_for_select(Institution.all.sort_by(&:title).collect { |i| [i.title, i.id] },
+                     options_for_select(Institution.all.sort_by(&:title).collect { |i| [i.title, i.id] }|[['New', 0]],
                                         selected: params['institutions']),
                      { multiple: true, class: 'form-control'} -%>
       <div style='display: none' class="form-group other">
