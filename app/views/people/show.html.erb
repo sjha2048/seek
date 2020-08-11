@@ -12,7 +12,10 @@
     <div class="row">
       <div class="col-md-6">
         <%= persistent_resource_id(@person) %>
-        <p>
+        <%
+        #uncomment this to show location of a user
+=begin%>
+ <p>
           <% locations = @person.locations -%>
           <% unless locations.empty? -%>
               <b><%= locations.length == 1 ? 'Location' : 'Locations' %>:</b>
@@ -24,7 +27,9 @@
               <b>Location:</b>
               <span class="none_text">Not known</span>
           <% end -%>
-        </p>
+        </p> 
+<%
+=end%>
         <%= render :partial=>"areas_of_expertise", :locals => {:person=>@person} %>
         <p>
           <b>ORCID:</b>

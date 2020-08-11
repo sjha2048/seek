@@ -2,7 +2,7 @@
 en:
   search_label: ""
   search_prompt: "Search here..."
-  seek_id: "SEEK ID"
+  seek_id: "Profile Page"
 
   login:
     elixir_aai: 'ELIXIR AAI'
