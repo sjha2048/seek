@@ -1,7 +1,14 @@
+<%= button_link_to("Edit Project", 'edit', edit_programme_path(item)) -%>
+<%= button_link_to("Create Meeting", 'add', new_project_path(programme_id:item.id)) -%>
+
 <%= item_actions_dropdown do %>
     <% if item.can_manage? -%>
 
-        <li><%= image_tag_for_key('edit', edit_programme_path(item), "Edit #{t('project')}", nil, "Edit #{t('project')}") %></li>
+        <%
+=begin%>
+ <li><%= image_tag_for_key('edit', edit_programme_path(item), "Edit #{t('project')}", nil, "Edit #{t('project')}") %></li> 
+<%
+=end%>
 
         <%
 =begin%>

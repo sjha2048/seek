@@ -1,4 +1,4 @@
-<%= panel("Your Project Membership") do %>
+<%= panel("Your Meeting Membership") do %>
     <%
 =begin%>
  <p class="alert alert-info">
@@ -10,8 +10,8 @@
 =end%>
 
     <div class='form-group'>
-      <%= check_box_tag :add_current_user, '1', true, :id => 'default_member[add_to_project]',:name=>'default_member[add_to_project]' %> Add me to this <%= t('project') %> and
-      make me the <%= t('project_administrator') %>.
+      <%= check_box_tag :add_current_user, '1', true, :id => 'default_member[add_to_project]',:name=>'default_member[add_to_project]' %> Add me to this Meeting and
+      make me the Meeting administrator.
     </div>
     <div class='form-group' id='institution' style='display:none;'>
       <label for='institution'>Your Institution</label>

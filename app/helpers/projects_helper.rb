@@ -38,7 +38,7 @@ module ProjectsHelper
 
   def programme_link(project)
     html = if project.try(:programme).nil?
-             "<span class='none_text'>This #{t('project')} is not associated with a #{t('programme')}</span>"
+             "<span class='none_text'>This Meeting is not associated with a Project</span>"
            else
              '<span>' + link_to(h(project.programme.title), project.programme) + '</span>'
            end

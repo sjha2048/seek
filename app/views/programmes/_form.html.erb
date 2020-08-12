@@ -2,7 +2,7 @@
 
 <%= f.error_messages %>
 
-<%= panel("#{t('project')} Details") do %>
+<%= panel("Project Details") do %>
     <div class="form-group">
       <%= f.label :title, class: 'required' -%>
       <%= f.text_field :title, :class=>"form-control" -%>
@@ -45,7 +45,7 @@
 
 <% if @programme.can_manage? %>
 
-<%= panel("#{t('project')} Administrators (Please add yourself an an administrator)") do %>
+<%= panel("Project Administrators (Please add yourself an an administrator)") do %>
         <%= programme_administrators_input_box(@programme) %>
 <% end %>
 
