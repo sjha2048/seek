@@ -28,7 +28,7 @@ class ProgrammesController < ApplicationController
 
     respond_to do |format|
       if @programme.save
-        flash[:notice] = "The #{t('programme').capitalize} was successfully created."
+        flash[:notice] = "The Project was successfully created."
 
         # current person becomes the programme administrator, unless they are logged in
         # also activation email is sent

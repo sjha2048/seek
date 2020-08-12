@@ -16,7 +16,7 @@
     <% if logged_in_and_registered? %>
 
         <p class="programme_administrators">
-          <strong><%= t('project') %> Administrators:</strong>
+          <strong>Project Leader:</strong>
           <%= programme_administrator_link_list @programme -%>
         </p>
 
@@ -24,10 +24,14 @@
 
     <%= show_funding_codes(@programme) %>
 
-    <strong>Funding details:</strong>
+    <%
+=begin%>
+ <strong>Funding details:</strong>
     <div class="well well-sm">
       <%= text_or_not_specified(@programme.funding_details, :description=>true,:auto_link=>true, :none_text=>"No funding details specified") %>
-    </div>
+    </div> 
+<%
+=end%>
   </div>
 
   <div class="col-md-3 col-sm-4">
