@@ -8,7 +8,7 @@
       <div class="col-md-6">
         <% if Seek::Config.programmes_enabled %>
             <p>
-              <strong><%= t('programme') -%>:</strong>
+              <strong>Project:</strong>
               <%= programme_link(@project) -%>
             </p>
         <% end %>
@@ -36,23 +36,23 @@
 
         <% if logged_in_and_registered? %>
             <p class="project_administrators">
-              <strong><%= t('project_administrator').pluralize %>:</strong>
+              <strong>Meeting organizer:</strong>
               <%= project_administrator_link_list @project %>
             </p>
         <% end %>
 
           <p>
           <% if @project.start_date %>
-            <strong><%= t('project') -%> start date:</strong>
+            <strong>Meeting start date:</strong>
             <%= date_as_string(@project.start_date, false) -%>
           <% else %>
-            <strong><%= t('project') -%> created:</strong>
+            <strong>Meeting created:</strong>
             <%= date_as_string(@project.created_at, false) %>
           <% end %>
         </p>
         <% if @project.end_date %>
           <p>
-            <strong><%= t('project') -%> end date:</strong>
+            <strong>Meeting end date:</strong>
             <%= date_as_string(@project.end_date, false) -%>
           </p>
         <% end %>
