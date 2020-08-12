@@ -20,7 +20,7 @@ en:
   discipline: "Discipline"
   document: "Document"
   model: "Model"
-  sop: "SOP"
+  sop: "Abstract"
   workflow: "Workflow"
   workflows:
     workflow: "Workflow"
