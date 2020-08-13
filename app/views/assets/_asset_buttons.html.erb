@@ -55,9 +55,13 @@
 
 <% end -%>
 
-<% if asset.can_edit? %>
+<%
+=begin%>
+ <% if asset.can_edit? %>
   <%= add_to_dropdown(asset) %>
-<% end %>
+<% end %> 
+<%
+=end%>
 
 <%= item_actions_dropdown do %>
 

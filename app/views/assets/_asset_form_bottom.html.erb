@@ -30,10 +30,14 @@
     <%= render :partial=>"assets/select_tags" -%>
 <% end -%>
 
-<% if attribution_enable %>
+<%
+=begin%>
+ <% if attribution_enable %>
     <%= render :partial => "assets/attribution_form", :locals => {:resource_class => resource_class,
                                                                   :existing_attributions => existing_attributions }   -%>
-<% end %>
+<% end %> 
+<%
+=end%>
 
 <% if show_publications -%>
   <%= f.fancy_multiselect :publications, { other_projects_checkbox: true } %>

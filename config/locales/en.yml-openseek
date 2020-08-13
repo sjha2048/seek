@@ -38,9 +38,9 @@ en:
   organism: "Organism"
 
   person: "Person"
-  project: "Programmes"
+  project: "Meeting"
   institution: "Institution"
-  programme: "Programme"
+  programme: "Project"
   profile: "Profile"
 
   gadget:

@@ -148,7 +148,11 @@ end
 
       <%= render :partial => "scales/scales_selector",:locals=>{:object=>@sop} if show_scales?%>
 
-      <%= render :partial => 'assets/license_selector', :locals => { :resource => @sop } %>
+      <%
+=begin%>
+ <%= render :partial => 'assets/license_selector', :locals => { :resource => @sop } %> 
+<%
+=end%>
 
       <%= render :partial=> "assets/discussion_links_form", :locals=>{:resource => @sop} -%>
 
