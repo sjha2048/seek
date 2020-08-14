@@ -14,14 +14,22 @@
         <li role="presentation" class="dropdown-header"> My details</li>
         <li><%= link_to 'My items', items_person_path(current_person) -%></li>
         <li><%= link_to 'My profile', person_path(current_person) -%></li>
-        <li><%= link_to 'Edit profile', edit_person_path(current_person) -%></li>
-        <li><%= link_to 'Change password', edit_user_path(current_user) -%></li>
+        <%
+=begin%>
+ <li><%= link_to 'Edit profile', edit_person_path(current_person) -%></li> 
+<%
+=end%>
+        <%
+=begin%>
+ <li><%= link_to 'Change password', edit_user_path(current_user) -%></li> 
+<%
+=end%>
         <% if Seek::Config.omniauth_enabled %>
           <li><%= link_to 'Manage identities', user_identities_path(current_user) -%></li>
         <% end %>
 
         <% unless current_person.projects.empty? %>
-            <li role="presentation" class="dropdown-header"> My projects</li>
+            <li role="presentation" class="dropdown-header"> My Meetings</li>
             <% current_person.projects.each do |project| %>
                 <li class="project-item"><%= link_to project.title, project_path(project), title: project.title -%></li>
             <% end %>

@@ -1,4 +1,6 @@
-<% if mine?(@person) && !current_user.guest? -%>
+<% if mine?(@person)  && !current_user.guest? -%>
+
+   
     <% tooltip_text = "Publish your owned assets in one click. A preview will be given before publishing" %>
     <%= button_link_to "Edit Profile", "edit", edit_person_path(@person)-%>
     <%= button_link_to "Change Password", "lock",url_for({:controller=>:users, :action=>:edit, :id=>@person.user}) -%>
@@ -11,7 +13,11 @@
     <%= button_link_to "Assets you are Gatekeeping", "waiting", requested_approval_assets_person_path(@person),
                        'data-tooltip' => tooltip("The assets people have requested to publish, but are still awaiting your approval") -%>
   <% end %>
+  <% elsif @person.can_edit?(current_user)-%>
+    <%= button_link_to "Edit Profile", "edit", edit_person_path(@person)-%>
 <% end %>
+
+
 
 <%
 =begin%>

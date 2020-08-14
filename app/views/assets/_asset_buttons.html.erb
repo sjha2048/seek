@@ -30,11 +30,15 @@
 <% if asset.is_downloadable? -%>
   <% if can_download_asset?(asset, params[:code]) -%>
     <%# param code is used for temporary link -%>
-    <%= download_or_link_button display_asset,
+    <%
+=begin%>
+ <%= download_or_link_button display_asset,
                                 polymorphic_path(asset, version: version, action: :download, code: params[:code]),
                                 display_asset.single_content_blob.try(:url),
                                 human_name,
-                                class: 'btn btn-default', disabled: asset.download_disabled? %>
+                                class: 'btn btn-default', disabled: asset.download_disabled? %> 
+<%
+=end%>
     <% if show_explore_btn %>
       <% if display_asset.contains_extractable_spreadsheet? %>
         <%= button_link_to('Explore', 'spreadsheet', polymorphic_path(asset, version: version, action: :explore, code: params[:code])) %>
@@ -47,9 +51,13 @@
         </span>
       <% end %>
     <% elsif show_view_content_btn %>
-      <%= render partial: 'assets/view_content',
+      <%
+=begin%>
+ <%= render partial: 'assets/view_content',
                  locals: { content_blob: (asset.is_a?(Workflow) ? asset : display_asset).single_content_blob,
-                           button_style: true } %>
+                           button_style: true } %> 
+<%
+=end%>
     <% end %>
   <% end -%>
 
