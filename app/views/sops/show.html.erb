@@ -18,7 +18,13 @@
         <%= render :partial => "assets/asset_doi", :locals => {:displayed_resource=>@display_sop} %>
       </div>
     </div>
-    <%= render :partial=>"general/isa_graph", :locals => {:root_item => @sop, :deep => true, :include_parents => true} %>
+    <%
+=begin%>
+ <%= render :partial=>"general/isa_graph", :locals => {:root_item => @sop, :deep => true, :include_parents => true} %> 
+<%
+=end%>
+<%= render :partial=>"assets/resource_version_details", :locals=>{:displayed_resource=>@display_sop, :resource=>@sop} -%>
+
   </div>
 
   <div class="col-md-3 col-sm-4">
@@ -26,7 +32,6 @@
   </div>
 </div>
 
-<%= render :partial=>"assets/resource_version_details", :locals=>{:displayed_resource=>@display_sop, :resource=>@sop} -%>
 
 <%# get, classify and authorize all assets for this project -%>
 <%= render :partial=>"general/items_related_to",:object => @sop %>
