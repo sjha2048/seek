@@ -15,6 +15,7 @@
 .navbar {
   border-radius: 0;
   flex-shrink: 0;
+  background-color: #111a2b;
 }
 
 @mixin responsive-text-align($size) {
