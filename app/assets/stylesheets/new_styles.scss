@@ -252,7 +252,7 @@ div.hidden_list_item {
   margin-top: 6px;
   padding: 1em;
   color: #999;
-  @include rounded-box-shadow(#F5F5F5);
+  @include rounded-box-shadow(#3f4a5d);
 }
 
 .clickable {
@@ -1180,7 +1180,7 @@ h4 {
 }
 
 .panel-default .panel-body input{
-  color: white;
+  color: black;
   border-radius: 0px; 
   font-weight: bold;
 }
@@ -1214,10 +1214,11 @@ h4 {
   border-radius: none;
 }
 
-/* unsure what this is? */ 
+/* mesage box for requesting memberships */ 
 
 .modal-content {
   color: var(--accent-three);
+  background-color: #263042;
 }
 
 /* alert details */ 
@@ -1420,4 +1421,9 @@ p {
 h4 small, h4 .small, .h4 small, .h4 .small, h5 small, h5 .small, .h5 small, .h5 .small, h6 small, h6 .small, .h6 small, .h6 .small {
   font-size: 75%;
   color: white;
+}
+
+.alert-warning {
+  border-color: #737e92;
+  background-color: #737e92;
 }
