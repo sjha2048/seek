@@ -1,6 +1,6 @@
 # Project, Institution, Workgroup
-project = Project.where(title: 'Default Project').first_or_create
-institution = Institution.where(title: 'Default Institution').first_or_create(country: 'United Kingdom')
+project = Project.where(title: 'Default Meeting').first_or_create
+institution = Institution.where(title: 'CompModelMatch').first_or_create(country: 'United States')
 workgroup = WorkGroup.where(project_id: project.id, institution_id: institution.id).first_or_create
 
 admin_user = User.where(login: 'admin').first_or_create(
