@@ -1,5 +1,5 @@
 <%= modal(id: 'request-membership-dialog', size: 'm') do %>
-    <%= modal_header("Request #{t('project')} membership") %>
+    <%= modal_header("Request #{t('project')} registration") %>
     <%= modal_body do %>
         <div class="form-group">
           <%= form_tag(polymorphic_url(project, :action => :request_membership), method: :post, id: 'request-membership-form') do -%>
