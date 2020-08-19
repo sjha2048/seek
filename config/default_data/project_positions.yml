@@ -1,10 +1,10 @@
 vice coordinator:
   id: 2
-  name: Vice Coordinator
+  name: Vice Chair
 
 project coordinator:
   id: 3
-  name: Project Coordinator
+  name: Meeting Chair
 
 student:
   id: 4
