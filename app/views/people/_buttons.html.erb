@@ -15,6 +15,10 @@
   <% end %>
   <% elsif @person.can_edit?(current_user)-%>
     <%= button_link_to "Edit Profile", "edit", edit_person_path(@person)-%>
+    <%= button_link_to "Delete Profile", "destroy", person_path(@person),  
+		       { data: { confirm: 'Are you sure?' }, :method => :delete} -%> 
+  
+
 <% end %>
 
 

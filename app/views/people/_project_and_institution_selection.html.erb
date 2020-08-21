@@ -1,4 +1,4 @@
-<%= panel("#{t('project').pluralize} and Institutions") do %>
+<%= panel("#{t('project').pluralize} and Organization") do %>
   <p>
       If you need to be assigned to one or more existing <%= t('project').pluralize %>, please select them below and also indicate the Institution(s) you belong to.
       By doing so a <%= t('project') %> Administrator will be notified and will be able to add you. You will be notified by email once added.
@@ -25,7 +25,7 @@
     </div>
 
     <div class="col-sm-4">
-      <label>Institutions</label>
+      <label><%= t('institution') %></label>
       <%= select_tag "institutions",
                      options_for_select(Institution.all.sort_by(&:title).collect { |i| [i.title, i.id] }|[['New', 0]],
                                         selected: params['institutions']),
@@ -67,3 +67,4 @@
         $j('#institutions').change();
     });
 </script>
+
