@@ -17,19 +17,18 @@
     <%= panel("#{t('project')} positions", id: 'project-positions') do %>
         <% positions.keys.each do |position| %>
             <p>
-
                 <label><%= position.name %>:</label>
-                <%= membership_list(positions[position]) %>
-
-
+              	       
+	   <li><%= membership_list(positions[position]) %>
+               
             </p>
         <% end %>
         <% if memberships_without_positions.any? %>
             <p>
                 <label>Other <%= t('project').pluralize %>:</label>
-                <%= membership_list(memberships_without_positions) %>
-            </p>
+                <li><%= membership_list(memberships_without_positions) %></li>
+        </p>
         <% end %>
 
     <% end %>
-<% end %>
+<% end %>  
