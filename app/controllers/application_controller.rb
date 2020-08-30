@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
 
   def project_membership_required
     unless User.logged_in_and_member? || admin_logged_in?
-      flash[:error] = 'Only members of known projects, institutions or work groups are allowed to create new content.'
+      flash[:error] = 'You must be registered for a meeting to submit a new abstract or presentation.'
       respond_to do |format|
         format.html do
           object = determine_asset_from_controller

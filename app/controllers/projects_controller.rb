@@ -310,7 +310,7 @@ class ProjectsController < ApplicationController
     mail.deliver_later
     MessageLog.log_project_membership_request(current_user.person,@project,details)
 
-    flash[:notice]='Membership request has been sent'
+    flash[:notice]='Registration request has been sent'
 
     respond_with do |format|
       format.html{redirect_to(@project)}
