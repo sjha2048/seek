@@ -10,7 +10,7 @@
  <%= button_link_to("Dashboard", 'project_dashboard', dashboard_project_stats_path(item)) %> 
 <%
 =end%>
-    <%= button_link_to("Manage Meeting", 'manage', edit_project_path(item)) %>
+    <%= button_link_to("Manage Meeting", 'manage', admin_member_roles_project_path(item)) %>
     <%= button_link_to("Meeting Registrations", 'manage', admin_members_project_path(item)) -%>
 
 <% end -%>
