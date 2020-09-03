@@ -56,7 +56,7 @@ module WorkGroupsHelper
   def membership_list(memberships)
     memberships.collect do |membership|
       membership_link(membership)
-    end.join(' ; ').html_safe
+    end.join('<li>').html_safe
   end
 
   def membership_link(membership)

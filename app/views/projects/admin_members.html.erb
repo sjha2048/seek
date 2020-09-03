@@ -7,13 +7,13 @@
     <%= panel('Add members', :id => "add_member") do %>
         <div class="form-group">
           <label class="control-label">1. Type the names of the people you wish to add to the <%= t('project').downcase %></label>
-          <%= objects_input('people_ids', [], :typeahead => {:values => Person.all.map {|p| {:id => p.id, :name => p.name, :hint => p.typeahead_hint}}}) -%>
+          <%= objects_input('people_ids', [], :typeahead => {:values => Person.all.map {|p| {:id => p.id, :name => p.name}}}) -%>
         </div>
 
         <div class="form-group">
-          <label class="control-label">2. Select the institution through which these people are involved with the <%= t('project').downcase %></label>
+          <label class="control-label">2. Select the <%= t('institution').downcase %> through which these people are involved with the <%= t('project').downcase %></label>
           <%= select_tag :institution_ids, options_from_collection_for_select(Institution.order(:title), "id", "title"),
-                         :include_blank => true,
+                         :include_blank => false,
                          :class => 'form-control' %>
         </div>
 

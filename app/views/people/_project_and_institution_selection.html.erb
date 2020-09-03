@@ -13,9 +13,9 @@
     </p>
   <div class="row">
     <div class="col-sm-4">
-      <label>Meetings</label>
+      <label> <%= t('project') %></label>
       <%= select_tag "projects",
-                     options_for_select(Project.all.sort_by(&:title).collect { |p| [p.title, p.id] }|[['New', 0]],
+                     options_for_select(Project.all.sort_by(&:title).collect { |p| [p.title, p.id] }.drop(1),
                                         selected: params['projects']),
                      { multiple: true, class: 'form-control'} -%>
       <div style='display: none' class="form-group other">
@@ -67,4 +67,3 @@
         $j('#institutions').change();
     });
 </script>
-

@@ -30,7 +30,13 @@
     Please type <%= t('creator').pluralize -%> into the box below - suggestions will be displayed as you type.
   </p>
   <p>
-    <%= objects_input('creator-typeahead', [], :typeahead => {:query_url => typeahead_people_path + '?query=%QUERY'}) -%>
+    <%
+=begin%>
+ <%= objects_input('creator-typeahead', [], :typeahead => {:query_url => typeahead_people_path + '?query=%QUERY'}) -%> 
+<%
+=end%>
+  <%= objects_input('creator-typeahead', [], :typeahead => {:values => Person.all.map {|p| {:id => p.id, :name => p.name}}}) -%>
+
   </p>
 
   <p>
