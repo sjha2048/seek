@@ -5,7 +5,7 @@ class MessageLog < ApplicationRecord
   CONTACT_REQUEST = 2
 
   # the period concidered recent, which can be used to prevent a repeat message until that period has passed
-  RECENT_PERIOD = 12.hours.freeze
+  RECENT_PERIOD = 1.hours.freeze
 
   belongs_to :resource, polymorphic: true
   belongs_to :sender, class_name: 'Person'
