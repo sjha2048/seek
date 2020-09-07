@@ -228,7 +228,8 @@ class Project < ApplicationRecord
   def self.can_create?
     #uncomment this to disable project creation by normal user
     # User.admin_logged_in? || User.activated_programme_administrator_logged_in?
-    User.logged_in?
+    #User.logged_in?
+    User.admin_logged_in?
   end
 
   # set the administrators, assigned from the params to :project_administrator_ids
